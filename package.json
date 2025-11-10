@@ -1,0 +1,14 @@
+{
+  "name": "react-native-sticker-textinput",
+  "version": "0.2.4",
+  "description": "UITextView bridge that captures emoji & iOS stickers for React Native.",
+  "main": "index.js",
+  "react-native": "src/index.tsx",
+  "types": "src/index.tsx",
+  "files": ["index.js", "src", "ios", "react-native-sticker-textinput.podspec", "README.md", "LICENSE"],
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">=18",
+    "react-native": ">=0.74"
+  }
+}

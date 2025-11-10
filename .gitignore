@@ -1,0 +1,59 @@
+# Root Git ignore for React Native library + example
+
+# Node / JavaScript
+node_modules/
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Build outputs / coverage / artifacts
+dist/
+build/
+**/build/
+coverage/
+*.tgz
+*.zip
+*.map
+
+# Metro / Packager
+.metro-cache/
+**/.metro-cache/
+*.packager-info.json
+*.jsbundle
+
+# macOS
+.DS_Store
+*.swp
+
+# IDEs
+.vscode/
+.idea/
+
+# iOS / Xcode
+# (workspace and Pods are generated; project files (.xcodeproj) are kept)
+**/ios/Pods/
+**/ios/build/
+**/DerivedData/
+**/xcuserdata/
+**/*.xcworkspace
+**/.swiftpm/
+**/SourcePackages/
+
+# Android / Gradle
+**/android/.gradle/
+**/android/local.properties
+**/android/captures/
+**/android/*.iml
+**/android/app/build/
+**/android/build/
+**/.cxx/
+
+# Ruby (example uses Bundler)
+**/.bundle/
+**/vendor/
+
+# Lockfiles
+# (Keep root lockfiles if you prefer; comment out the next line to commit them)
+# example/ios/Podfile.lock
