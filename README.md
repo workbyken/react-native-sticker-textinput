@@ -166,16 +166,16 @@ const onSticker = (pngBase64: string) => {
 // Render StickerTextInput above/below the toolbar as you prefer
 ```
 
-### 2) Advanced: Custom composer replacement (experimental)
+### 2) Single-input composer replacement (used by the example)
 
-If you want `StickerTextInput` to be the composer, ensure GiftedChat still gets a `TextInput` ref it can use.
+Replace the composer with `StickerTextInput` so users type text/emoji and insert stickers in the same field. Key points:
 
-A pattern that works is to render:
+- Provide GiftedChat a valid input ref: in your `renderComposer`, pass a function ref that attaches GiftedChat’s `textInputProps.ref` to the native `StickerTextInput` instance, and add methods that GiftedChat expects (`clear`, `focus`, `blur`, `isFocused`).
+- Control GiftedChat text: pass `text` and `onInputTextChanged` to keep the input controlled; clear `text` after `onSend`.
+- Size reporting: call `onInputSizeChanged` from your container’s `onLayout`.
+- react-native-keyboard-controller (RNKC) compatibility: the iOS view uses NotificationCenter (not a UITextView delegate), which avoids delegate conflicts with RNKC’s composite delegate.
 
-- A hidden native `TextInput` wired to `props.textInputProps.ref` (so GC can call `clear()/focus()/isFocused()` safely), and
-- The visible `StickerTextInput` which updates GC’s text via `onEmoji` and sends images via `onSticker`.
-
-This is sensitive to library versions and your app’s keyboard handling; start from the minimal approach first.
+This is the pattern used by `example/App.tsx`.
 
 ## iOS signing for the example
 
@@ -209,7 +209,7 @@ You can then build the example normally (see steps below).
 
 ## Example App
 
-The `example/` folder demonstrates a minimal setup using a local `file:..` link to this package.
+The `example/` folder demonstrates the single-input composer integration with GiftedChat using a local `file:..` link to this package.
 
 Run it on iOS:
 
@@ -236,6 +236,26 @@ The example shows:
 
 - GiftedChat hard-crashes when using a custom composer
   - Keep the default composer first (Approach 1). If you replace it, be sure to pass a valid `TextInput` ref for GiftedChat internals.
+
+## Changelog
+
+### 0.2.5
+
+- iOS native
+  - Switched from `UITextViewDelegate` to NotificationCenter (`textDidChange`, `textDidBeginEditing`, `textDidEndEditing`) to avoid conflicts with react-native-keyboard-controller.
+  - Fixed placeholder drawing to hide when there is content and redraw on updates.
+  - Do not clear plain text/emoji on change (input behaves like a normal field); stickers still clear after extraction.
+  - Added styling props support: `placeholderColor`, `textColor`, `fontSize`, `fontFamily`, `textAlign`, `paddingTop/Left/Bottom/Right`, and `editable`.
+  - Exported `text` prop for controlled usage.
+  - Fixed `editable` mapping to use `setEditable:` (avoids `setIsEditable:` crash).
+
+- JS bridge
+  - Exposed the above styling props and `text?: string` on the component props.
+
+- Example app
+  - Updated to a single-input GiftedChat composer (`renderComposer`) using `StickerTextInput`.
+  - Controlled text via `text`/`onInputTextChanged`, attach GiftedChat ref to the native input with expected methods, report size on layout.
+  - Added iOS signing instructions with `Signing.xcconfig` template.
 
 ## License
 

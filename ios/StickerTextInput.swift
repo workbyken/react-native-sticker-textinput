@@ -2,11 +2,13 @@ import UIKit
 import React
 
 @objc(StickerTextInput)
-class StickerTextInput: UITextView, UITextViewDelegate {
+class StickerTextInput: UITextView {
 
   // JS events
   @objc var onEmoji: RCTDirectEventBlock?
   @objc var onSticker: RCTDirectEventBlock?
+  @objc var onFocus: RCTDirectEventBlock?
+  @objc var onBlur: RCTDirectEventBlock?
 
   // Optional placeholder
   @objc var placeholder: NSString? {
@@ -47,7 +49,6 @@ class StickerTextInput: UITextView, UITextViewDelegate {
   }
 
   private func commonInit() {
-    delegate = self
     isScrollEnabled = true
     backgroundColor = .clear
     font = UIFont.preferredFont(forTextStyle: .body)
@@ -66,6 +67,25 @@ class StickerTextInput: UITextView, UITextViewDelegate {
     autocorrectionType = .default
     smartInsertDeleteType = .yes
     dataDetectorTypes = []
+
+    // Observe editing and text changes instead of using delegate to avoid
+    // conflicts with react-native-keyboard-controller's composite delegate
+    NotificationCenter.default.addObserver(self,
+                                           selector: #selector(handleTextDidChange(_:)),
+                                           name: UITextView.textDidChangeNotification,
+                                           object: self)
+    NotificationCenter.default.addObserver(self,
+                                           selector: #selector(handleDidBeginEditing(_:)),
+                                           name: UITextView.textDidBeginEditingNotification,
+                                           object: self)
+    NotificationCenter.default.addObserver(self,
+                                           selector: #selector(handleDidEndEditing(_:)),
+                                           name: UITextView.textDidEndEditingNotification,
+                                           object: self)
+  }
+
+  deinit {
+    NotificationCenter.default.removeObserver(self)
   }
 
   private func updateFont() {
@@ -99,9 +119,8 @@ class StickerTextInput: UITextView, UITextViewDelegate {
     }
   }
 
-  // MARK: - UITextViewDelegate
-  func textViewDidChange(_ textView: UITextView) {
-    // Skip delegate when we are setting text from JS to prevent loops
+  // MARK: - Notification handlers
+  @objc private func handleTextDidChange(_ note: Notification) {
     if isUpdatingFromJS { return }
     // 1) Try adaptive glyphs (iOS 18)
     if #available(iOS 18.0, *) {
@@ -128,6 +147,14 @@ class StickerTextInput: UITextView, UITextViewDelegate {
 
     // Ensure placeholder visibility is updated when text changes
     setNeedsDisplay()
+  }
+
+  @objc private func handleDidBeginEditing(_ note: Notification) {
+    onFocus?( [:] )
+  }
+
+  @objc private func handleDidEndEditing(_ note: Notification) {
+    onBlur?( [:] )
   }
 
   // MARK: - Extraction helpers

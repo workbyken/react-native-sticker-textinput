@@ -60,3 +60,4 @@ example/ios/Signing.xcconfig
 # Lockfiles
 # (Keep root lockfiles if you prefer; comment out the next line to commit them)
 # example/ios/Podfile.lock
+example/package-lock.json

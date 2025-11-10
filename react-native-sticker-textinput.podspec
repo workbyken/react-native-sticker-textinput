@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name         = "react-native-sticker-textinput"
-    s.version      = "0.2.4"
+    s.version      = "0.2.5"
     s.summary      = "UITextView bridge that captures emoji & iOS stickers for React Native."
     s.license      = "MIT"
     s.homepage     = "https://github.com/workbyken/react-native-sticker-textinput"
