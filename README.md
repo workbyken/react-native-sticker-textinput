@@ -177,6 +177,36 @@ A pattern that works is to render:
 
 This is sensitive to library versions and your app’s keyboard handling; start from the minimal approach first.
 
+## iOS signing for the example
+
+To avoid committing personal Apple Team settings, the example uses an xcconfig pattern:
+
+1. Copy the template and fill in your values:
+
+   ```bash
+cp example/ios/Signing.example.xcconfig example/ios/Signing.xcconfig
+```
+
+   Edit `example/ios/Signing.xcconfig` and set:
+ 
+   - `DEVELOPMENT_TEAM = <YOUR_TEAM_ID>` (10-character alphanumeric Apple Team ID, not your company name)
+   - `PRODUCT_BUNDLE_IDENTIFIER = com.example.StickerTextInputDemo` (or your own)
+   - Optional: `CODE_SIGN_STYLE = Automatic` (or Manual) and `PROVISIONING_PROFILE_SPECIFIER`
+
+   Tip — Find your Team ID:
+   - Apple Developer: Users and Access → Team Information → Team ID
+   - Xcode: Settings/Preferences → Accounts → select your Team → Team ID
+
+2. Point the project and target to this config in Xcode:
+
+   - Open `example/ios/demo.xcworkspace`
+   - Select the Project and Target, go to Build Settings
+   - Set Base Configuration (Debug/Release) to `Signing.xcconfig`
+
+3. `example/ios/Signing.xcconfig` is git-ignored, so your personal settings stay local.
+
+You can then build the example normally (see steps below).
+
 ## Example App
 
 The `example/` folder demonstrates a minimal setup using a local `file:..` link to this package.

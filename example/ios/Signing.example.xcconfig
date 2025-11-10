@@ -1,0 +1,16 @@
+// Example iOS signing config for the demo app
+// Copy this file to `Signing.xcconfig` and fill in your values.
+// Then in Xcode, set Base Configuration (Project and Target) to Signing.xcconfig.
+
+// Your Apple Team ID (10-character alphanumeric, NOT your company name)
+// Example: ABCDE12345
+DEVELOPMENT_TEAM = YOUR_TEAM_ID
+
+// Automatic or Manual
+CODE_SIGN_STYLE = Automatic
+
+// Recommended bundle identifier for the demo target
+PRODUCT_BUNDLE_IDENTIFIER = com.example.StickerTextInputDemo
+
+// Optional: If using manual signing, specify your provisioning profile
+// PROVISIONING_PROFILE_SPECIFIER = YourProfileName
