@@ -89,12 +89,29 @@ class StickerTextInput: UITextView {
   }
 
   private func updateFont() {
-    let size = CGFloat(fontSize?.doubleValue ?? Double(UIFont.preferredFont(forTextStyle: .body).pointSize))
-    if let family = fontFamily as String?, let custom = UIFont(name: family, size: size) {
-      font = custom
+    // Resolve the desired size
+    let defaultPointSize = UIFont.preferredFont(forTextStyle: .body).pointSize
+    let sizeNSNumber = fontSize ?? NSNumber(value: Double(defaultPointSize))
+    let size = CGFloat(truncating: sizeNSNumber)
+
+    // Base font to update
+    let base = self.font ?? UIFont.systemFont(ofSize: size)
+
+    if let family = fontFamily as String?, !family.isEmpty {
+      // Use RCTFont so Expo Font (and other providers) can supply loaded fonts by family name
+      // Falls back to UIFont(name:) and finally system font if needed
+      let updated = RCTFont.update(base,
+                                   withFamily: family,
+                                   size: sizeNSNumber,
+                                   weight: nil,
+                                   style: nil,
+                                   variant: nil,
+                                   scaleMultiplier: 1.0)
+      self.font = updated ?? UIFont(name: family, size: size) ?? UIFont.systemFont(ofSize: size)
     } else {
-      font = UIFont.systemFont(ofSize: size)
+      self.font = UIFont.systemFont(ofSize: size)
     }
+
     setNeedsDisplay()
   }
 

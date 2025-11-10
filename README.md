@@ -97,6 +97,56 @@ const styles = StyleSheet.create({
 });
 ```
 
+### Custom fonts (Expo)
+
+You can use custom fonts loaded with Expo and apply them via the `fontFamily` prop. This component resolves fonts with React Native’s `RCTFont`, so the keys you register with `expo-font` will work natively.
+
+```tsx
+import * as React from 'react';
+import { SafeAreaView } from 'react-native';
+import { useFonts } from 'expo-font';
+import { StickerTextInput } from 'react-native-sticker-textinput';
+
+export default function Screen() {
+  const [fontsLoaded] = useFonts({
+    'DM-Mono-Italic': require('../assets/fonts/DMMono-Italic.ttf'),
+    'DM-Mono-Light': require('../assets/fonts/DMMono-Light.ttf'),
+    'DM-Mono-LightItalic': require('../assets/fonts/DMMono-LightItalic.ttf'),
+    'DM-Mono-Medium': require('../assets/fonts/DMMono-Medium.ttf'),
+    'DM-Mono-MediumItalic': require('../assets/fonts/DMMono-MediumItalic.ttf'),
+    'DM-Mono-Regular': require('../assets/fonts/DMMono-Regular.ttf'),
+  });
+
+  if (!fontsLoaded) return null; // or a splash/loading state
+
+  return (
+    <SafeAreaView style={{ flex: 1, padding: 16 }}>
+      <StickerTextInput
+        placeholder="Type…"
+        fontFamily="DM-Mono-Regular" // exact key from useFonts map
+        fontSize={16}
+        textColor="#111"
+        placeholderColor="#9AA0A6"
+        style={{
+          borderWidth: 1,
+          borderColor: '#ccc',
+          borderRadius: 10,
+          minHeight: 50,
+          padding: 8,
+          backgroundColor: 'white',
+        }}
+      />
+    </SafeAreaView>
+  );
+}
+```
+
+Notes:
+
+- Use the exact string key you registered in `useFonts` as `fontFamily` (e.g., `"DM-Mono-Regular"`).
+- Gate rendering on `fontsLoaded` so iOS resolves the font.
+- Works in Expo managed and bare workflows. For non‑Expo RN apps, any properly linked custom font family name will also work.
+
 ## Props
 
 The component exposes a set of view-level and text-level props, plus events.
@@ -226,6 +276,47 @@ The example shows:
 - Typing emoji/letters updates the log
 - Inserting a sticker displays a preview image
 
+## Expo EAS compatibility
+
+This package is compatible with Expo EAS in both managed and bare workflows. No custom config plugin is required.
+
+### Managed workflow (EAS Build)
+
+1. Install the package in your Expo app:
+   ```bash
+   expo install react-native-sticker-textinput
+   # If not already present in your app:
+   expo install react-native-gesture-handler react-native-reanimated react-native-keyboard-controller
+   ```
+
+2. Ensure Reanimated plugin is enabled in your app’s `babel.config.js`:
+   ```js
+   module.exports = {
+     presets: ['babel-preset-expo'],
+     plugins: ['react-native-reanimated/plugin'],
+   };
+   ```
+
+3. Build a Dev Client (recommended) and run:
+   ```bash
+   eas build -p ios --profile development
+   npx expo start --dev-client
+   ```
+
+Notes:
+- iOS only. Guard usage on Android with `Platform.OS === 'ios'` or render a standard composer.
+- Minimum iOS version: 13.0+ (matches the Podspec).
+- EAS will run prebuild for you; the Podspec/autolinking is sufficient—no config plugin needed.
+
+### Bare workflow
+
+1. Install the package and pods like any RN app:
+   ```bash
+   npm install react-native-sticker-textinput
+   npx pod-install
+   ```
+2. Follow the same usage as shown above (GiftedChat single-input composer or minimal setup).
+
 ## Troubleshooting
 
 - Placeholder shows behind text
@@ -238,6 +329,14 @@ The example shows:
   - Keep the default composer first (Approach 1). If you replace it, be sure to pass a valid `TextInput` ref for GiftedChat internals.
 
 ## Changelog
+
+### 0.2.6
+
+- iOS native
+  - Resolve `fontFamily` using `RCTFont.update(...)` so fonts loaded via Expo (`expo-font`) and other providers are respected.
+  - Maintain fallbacks to `UIFont(name:)` and system font.
+- Docs
+  - Added README section showing how to use custom fonts with Expo.
 
 ### 0.2.5
 
