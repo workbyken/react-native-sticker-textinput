@@ -17,6 +17,8 @@ class StickerTextInput: UITextView {
 
   // Customization props (set from React Native)
   @objc var placeholderColor: UIColor? { didSet { setNeedsDisplay() } }
+  @objc var placeholderFontSize: NSNumber? { didSet { setNeedsDisplay() } }
+  @objc var placeholderFontFamily: NSString? { didSet { setNeedsDisplay() } }
   @objc var fontSize: NSNumber? { didSet { updateFont() } }
   @objc var fontFamily: NSString? { didSet { updateFont() } }
   @objc var textAlign: NSString? { didSet { updateAlignment() } }
@@ -24,6 +26,14 @@ class StickerTextInput: UITextView {
   @objc var paddingLeft: NSNumber? { didSet { updateInsets() } }
   @objc var paddingBottom: NSNumber? { didSet { updateInsets() } }
   @objc var paddingRight: NSNumber? { didSet { updateInsets() } }
+  @objc var lineFragmentPadding: NSNumber? {
+    didSet {
+      if let n = lineFragmentPadding {
+        textContainer.lineFragmentPadding = CGFloat(truncating: n)
+        setNeedsDisplay()
+      }
+    }
+  }
 
   // Track programmatic updates coming from JS 'text' prop to avoid firing delegate
   private var isUpdatingFromJS: Bool = false
@@ -115,6 +125,26 @@ class StickerTextInput: UITextView {
     setNeedsDisplay()
   }
 
+  private func resolvePlaceholderFont() -> UIFont {
+    let base = self.font ?? UIFont.preferredFont(forTextStyle: .body)
+    let defaultPointSize = base.pointSize
+    let sizeNSNumber = placeholderFontSize ?? fontSize ?? NSNumber(value: Double(defaultPointSize))
+    let size = CGFloat(truncating: sizeNSNumber)
+
+    if let family = placeholderFontFamily as String?, !family.isEmpty {
+      let updated = RCTFont.update(base,
+                                   withFamily: family,
+                                   size: sizeNSNumber,
+                                   weight: nil,
+                                   style: nil,
+                                   variant: nil,
+                                   scaleMultiplier: 1.0)
+      return updated ?? UIFont(name: family, size: size) ?? UIFont.systemFont(ofSize: size)
+    }
+
+    return base.withSize(size)
+  }
+
   private func updateInsets() {
     let current = textContainerInset
     let top = paddingTop?.doubleValue != nil ? CGFloat(truncating: paddingTop!) : current.top
@@ -134,6 +164,7 @@ class StickerTextInput: UITextView {
     case "natural": textAlignment = .natural
     default: textAlignment = .left
     }
+    setNeedsDisplay()
   }
 
   // MARK: - Notification handlers
@@ -215,10 +246,17 @@ class StickerTextInput: UITextView {
   override func draw(_ rect: CGRect) {
     super.draw(rect)
     guard !hasText, let ph = placeholder as String?, !ph.isEmpty else { return }
+    let paragraph = NSMutableParagraphStyle()
+    paragraph.alignment = self.textAlignment
     let attrs: [NSAttributedString.Key: Any] = [
       .foregroundColor: (placeholderColor ?? UIColor.secondaryLabel),
-      .font: font ?? UIFont.preferredFont(forTextStyle: .body)
+      .font: resolvePlaceholderFont(),
+      .paragraphStyle: paragraph
     ]
-    (ph as NSString).draw(in: rect.insetBy(dx: 12, dy: 8), withAttributes: attrs)
+    let inset = self.textContainerInset
+    let padding = self.textContainer.lineFragmentPadding
+    let boundsInset = rect.inset(by: inset)
+    let placeholderRect = boundsInset.insetBy(dx: padding, dy: 0)
+    (ph as NSString).draw(in: placeholderRect, withAttributes: attrs)
   }
 }

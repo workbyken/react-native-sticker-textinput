@@ -956,7 +956,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-sticker-textinput (0.2.5):
+  - react-native-sticker-textinput (0.2.8):
     - React-Core
   - React-nativeconfig (0.74.4)
   - React-NativeModulesApple (0.74.4):
@@ -1493,7 +1493,7 @@ SPEC CHECKSUMS:
   React-logger: fbfb50e2a2b1b46ee087f0a52739fadecc5e81a4
   React-Mapbuffer: d39610dff659d8cf1fea485abae08bbf6f9c8279
   react-native-keyboard-controller: 57c7bcde290314e63d9c9696467ac7bd8137ced1
-  react-native-sticker-textinput: eccecc01b986586f569c6200a22385ea496c0799
+  react-native-sticker-textinput: 90b459c2eaadbb5af6d89a1bceaf3033e66a65d1
   React-nativeconfig: 2be4363c2c4ac2b42419577774e83e4e4fd2af9f
   React-NativeModulesApple: 453ada38f826a508e48872c7a7877c431af48bba
   React-perflogger: 9745f800ab4d12ec4325bde7bd090eafb87c5570

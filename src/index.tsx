@@ -10,9 +10,11 @@ import {
 type StickerEvt = { nativeEvent: { png: string; adaptive?: boolean } };
 type EmojiEvt   = { nativeEvent: { text: string } };
 
-type Props = {
+export type StickerTextInputProps = {
   style?: ViewStyle;
   placeholder?: string;
+  placeholderFontSize?: number;
+  placeholderFontFamily?: string;
   text?: string;
   placeholderColor?: string;
   textColor?: string;
@@ -23,18 +25,19 @@ type Props = {
   paddingLeft?: number;
   paddingBottom?: number;
   paddingRight?: number;
+  lineFragmentPadding?: number; // inner horizontal padding inside the text container
   editable?: boolean;
   onEmoji?: (e: EmojiEvt) => void;
   onSticker?: (e: StickerEvt) => void;
 };
 
-const NativeStickerInput = requireNativeComponent<Props>('StickerTextInput');
+const NativeStickerInput = requireNativeComponent<StickerTextInputProps>('StickerTextInput');
 const NativeAPI = NativeModules.StickerTextInputManager as {
   focus: (reactTag: number) => void;
   blurInput: (reactTag: number) => void;
 };
 
-export const StickerTextInput = React.forwardRef<any, Props>((props, ref) => {
+export const StickerTextInput = React.forwardRef<any, StickerTextInputProps>((props, ref) => {
   const innerRef = React.useRef<any>(null);
 
   React.useImperativeHandle(ref, () => ({

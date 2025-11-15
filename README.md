@@ -1,6 +1,13 @@
+### 0.2.7
+
+- iOS native / JS bridge
+  - Added `placeholderFontSize` and `placeholderFontFamily` props to style the placeholder font separately from content.
+  - Placeholder drawing now respects `textAlign`, `textContainerInset` and `lineFragmentPadding` so it aligns with typed text.
+  - Exposed `lineFragmentPadding` prop to control the inner horizontal padding of the `UITextView` text container.
+
 # react-native-sticker-textinput
 
-A tiny iOS-only `UITextView` bridge for React Native that captures Apple emoji and iOS stickers (including iOS 18 adaptive image glyphs) and sends them to JS as events. It behaves like a text input and lets you fully style the native field (font, color, alignment, paddings, placeholder color, editability), while emitting:
+A tiny iOS-only `UITextView` bridge for React Native that captures Apple emoji and iOS stickers (including iOS 18 adaptive image glyphs) and sends them to JS as events. It behaves like a text input and lets you fully style the native field (font, color, alignment, paddings, placeholder styling, editability), while emitting:
 
 - `onEmoji`: plain text and emoji characters (Unicode) you type
 - `onSticker`: PNG payloads for iOS stickers/memoji (iOS 17 attachments and iOS 18 adaptive glyphs)
@@ -55,6 +62,9 @@ export default function App() {
       <StickerTextInput
         placeholder="Type emoji or insert a sticker…"
         placeholderColor="#9AA0A6"
+        placeholderFontSize={16}
+        // If using custom fonts for the placeholder specifically
+        // placeholderFontFamily="DM-Mono-Regular"
         textColor="#111111"
         fontSize={16}
         textAlign="left"
@@ -62,6 +72,8 @@ export default function App() {
         paddingLeft={12}
         paddingBottom={8}
         paddingRight={12}
+        // Controls the extra inner horizontal padding of UITextView's text container
+        lineFragmentPadding={0}
         editable
         onEmoji={(e) => {
           setLog(`Emoji: ${e.nativeEvent.text}`);
@@ -158,7 +170,9 @@ export type StickerTextInputProps = {
 
   // Optional placeholder
   placeholder?: string;
-  placeholderColor?: string; // color for the placeholder text
+  placeholderColor?: string;      // color for the placeholder text
+  placeholderFontSize?: number;   // font size for the placeholder (defaults to content font size)
+  placeholderFontFamily?: string; // font family for the placeholder (supports Expo fonts)
 
   // Text styling / behavior
   text?: string;             // optional controlled value (iOS only)
@@ -170,6 +184,7 @@ export type StickerTextInputProps = {
   paddingLeft?: number;
   paddingBottom?: number;
   paddingRight?: number;
+  lineFragmentPadding?: number; // extra inner horizontal padding inside the text container
   editable?: boolean;        // default true
 
   // Events
@@ -198,6 +213,17 @@ ref.current?.blur();
 - On iOS 17 and earlier, it falls back to scanning text attachments and emits `onSticker` with `{png, adaptive: false}`.
 - Plain text and emoji characters are emitted via `onEmoji` and are no longer cleared by the native view; the input remains visible and behaves like a standard text input.
 - Placeholder is custom-drawn and hides automatically whenever there is content.
+
+## Styling containers: outer vs inner padding
+
+There are two layers you can style:
+
+- Outer container (React Native `style` prop on the view): borders, background, borderRadius, minHeight, etc. This styles the `UITextView` itself.
+- Inner text area padding:
+  - `paddingTop/Left/Bottom/Right` map to `textContainerInset` and control padding between the text and the view edges.
+  - `lineFragmentPadding` controls the additional inner horizontal padding that `UITextView` applies inside its text container. Set it to `0` for edge-to-edge text within the inset area.
+
+The placeholder now respects `textAlign`, `textContainerInset`, and `lineFragmentPadding`, so it will line up exactly with typed text.
 
 ## GiftedChat Integration (Two Approaches)
 

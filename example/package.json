@@ -16,7 +16,7 @@
     "react-native-gifted-chat": "^2.8.1",
     "react-native-keyboard-controller": "^1.19.5",
     "react-native-reanimated": "^3.15.0",
-    "react-native-sticker-textinput": "file:../react-native-sticker-textinput-0.2.6.tgz"
+    "react-native-sticker-textinput": "file:../react-native-sticker-textinput-0.2.8.tgz"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

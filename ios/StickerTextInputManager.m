@@ -7,6 +7,8 @@ RCT_EXPORT_VIEW_PROPERTY(placeholder, NSString)
 RCT_EXPORT_VIEW_PROPERTY(text, NSString)
 // Styling / behavior props
 RCT_EXPORT_VIEW_PROPERTY(placeholderColor, UIColor)
+RCT_EXPORT_VIEW_PROPERTY(placeholderFontSize, NSNumber)
+RCT_EXPORT_VIEW_PROPERTY(placeholderFontFamily, NSString)
 RCT_EXPORT_VIEW_PROPERTY(textColor, UIColor)
 RCT_EXPORT_VIEW_PROPERTY(fontSize, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(fontFamily, NSString)
@@ -15,6 +17,7 @@ RCT_EXPORT_VIEW_PROPERTY(paddingTop, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(paddingLeft, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(paddingBottom, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(paddingRight, NSNumber)
+RCT_EXPORT_VIEW_PROPERTY(lineFragmentPadding, NSNumber)
 RCT_EXPORT_VIEW_PROPERTY(editable, BOOL)
 
 // Imperative commands
